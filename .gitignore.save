@@ -1,0 +1,7 @@
+# Ignore tout
+*
+
+# Sauf ces fichiers
+!.gitignore
+!requirements.txt
+!Paris-Sportif-Presentation.py
