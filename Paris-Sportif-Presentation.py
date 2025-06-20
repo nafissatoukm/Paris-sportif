@@ -65,7 +65,8 @@ Les meilleurs résultats que nous avons pu obtenir y seront présentés, avec la
 """)
 
 
-    st.image("/Users/nafissatoukm/Desktop/Streamlit/cas2/images/tennis-paris-sportifs.jpg", use_column_width=True)
+    st.image("images/tennis-paris-sportifs.jpg", use_container_width=True)
+
 
 
 #######Page 1
