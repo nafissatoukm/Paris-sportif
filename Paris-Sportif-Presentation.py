@@ -65,7 +65,7 @@ Les meilleurs résultats que nous avons pu obtenir y seront présentés, avec la
 """)
 
 
-    st.image("/Users/nafissatoukm/Desktop/Streamlit/cas2/tennis-paris-sportifs.jpg", use_column_width=True)
+    st.image("/Users/nafissatoukm/Desktop/Streamlit/cas2/images/tennis-paris-sportifs.jpg", use_column_width=True)
 
 
 #######Page 1
@@ -499,7 +499,7 @@ if page == pages[5]:
     st.markdown("""
 ##  Application métier
 
-Dans le cadre de ce projet, nous avons conçu une stratégie de **paris sportifs** fondée sur l’identification des *outsiders* — c’est-à-dire les équipes considérées comme moins probables de gagner par les bookmakers — et sur l'agrégation des prédictions de plusieurs modèles de machine learning.
+Dans le cadre de ce projet, nous avons conçu une stratégie de **paris sportifs** fondée sur l’identification des *outsiders* — c’est-à-dire les joueurs considérées comme moins probables de gagner par les bookmakers — et sur l'agrégation des prédictions de plusieurs modèles de machine learning.
 
 L’application métier est double :
 - Optimiser la prise de décision en matière de paris en se concentrant sur les **matchs à forte valeur attendue**.
