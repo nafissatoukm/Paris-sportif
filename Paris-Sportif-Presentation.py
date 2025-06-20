@@ -200,33 +200,30 @@ atp = load_data()
 if page == pages[2]:
     st.write("### Quelques visualisations")
     st.write("Nous affichons ici quelques visualisations graphiques afin de présenter le contexte et les premières analyses des variables qui nous permettrons d'élaborer les premières actions en vue de la modélisation")
-
     choix = [
         "Répartition du nombre de matchs par an et par type de tournois",
         "Top 30",
         "Nuage de points des cotes des bookmakers",
         "Heatmap de corrélation",
-        "Graphique de dispersion entre WRank et Round",
         "Courbe sigmoïde d'écart entre les scores Elo",
+        "Graphique de dispersion entre WRank et Round",
         "Box plot classement des vainqueurs par surface et tour",
-        "Pair plot d'observation de relations entre plusieurs variables"
     ]
     option = st.selectbox('Choix de la visualisation', choix)
     st.write('Visualisation en cours:', option)
-
     # Extraction de l'année à partir de la colonne Date si ce n'est pas déjà fait
     if 'Year' not in atp.columns:
         atp['Date'] = pd.to_datetime(atp['Date'])
         atp['Year'] = atp['Date'].dt.year
-
     if option == "Répartition du nombre de matchs par an et par type de tournois":
-        fig = plt.figure(figsize=(20,12))
+        Series={"International":"ATP250", "International Gold":"ATP500", "Masters Cup":"Masters"}
+        atp["Series"]=atp["Series"].replace(Series)
+        fig = plt.figure(figsize=(15,8))
         sns.countplot(data=atp, x="Year", hue="Series")
         plt.xticks(rotation=90)
         plt.legend(loc="best")
         plt.title("Répartition du nombre de matchs par an et par type de tournois")
         st.pyplot(fig)
-
     if option == "Top 30":
         top_players = atp["Winner"].value_counts().head(30)
         bad_players = atp["Loser"].value_counts().head(30)
@@ -240,7 +237,6 @@ if page == pages[2]:
         plt.xticks(rotation=75)
         plt.title("Top 30 des joueurs perdants de matchs")
         st.pyplot(fig)
-
     if option == "Nuage de points des cotes des bookmakers":
         fig = px.scatter(
             atp,
@@ -251,13 +247,19 @@ if page == pages[2]:
             color='Winner'
         )
         st.plotly_chart(fig, use_container_width=True)
-
     if option == "Heatmap de corrélation":
         fig = plt.figure(figsize=(15,8))
         corr = atp[["Best of", "WRank", "LRank", "Wsets", "Lsets", 'PSW', 'PSL', 'B365W', 'B365L', 'elo_winner', 'elo_loser', 'proba_elo']].corr()
         sns.heatmap(data=corr, annot=True, cmap="rocket")
         st.pyplot(fig)
-
+    if option == "Courbe sigmoïde d'écart entre les scores Elo":
+        atp["elo_diff"] = atp["elo_winner"] - atp["elo_loser"]
+        fig = plt.figure(figsize=(15, 10))
+        sns.scatterplot(x=atp['elo_diff'], y=atp['proba_elo'], color='blue', alpha=0.5)
+        plt.xlabel('Différence Elo (elo_winner - elo_loser)')
+        plt.ylabel('Proba Elo')
+        plt.title('Relation entre la différence Elo et la probabilité Elo')
+        st.pyplot(fig)
     if option == "Graphique de dispersion entre WRank et Round":
         round_order = {
             'Round Robin': 0, '1st Round': 1, '2nd Round': 2, '3rd Round': 3, '4th Round': 4,
@@ -271,31 +273,18 @@ if page == pages[2]:
         plt.ylabel("Round (Tour du tournoi)")
         plt.ylim(0.5,6.5)
         st.pyplot(fig)
-
-    if option == "Courbe sigmoïde d'écart entre les scores Elo":
-        atp["elo_diff"] = atp["elo_winner"] - atp["elo_loser"]
-        fig = plt.figure(figsize=(15, 10))
-        sns.scatterplot(x=atp['elo_diff'], y=atp['proba_elo'], color='blue', alpha=0.5)
-        plt.xlabel('Différence Elo (elo_winner - elo_loser)')
-        plt.ylabel('Proba Elo')
-        plt.title('Relation entre la différence Elo et la probabilité Elo')
-        st.pyplot(fig)
-
     if option == "Box plot classement des vainqueurs par surface et tour":
         atp_tournoi_majeur = atp.loc[atp['Series'].isin(['Grand Slam', 'Masters', 'Masters 1000'])]
         atp_tournoi_mineur = atp.loc[atp['Series'].isin(['ATP250', 'ATP500'])]
-
         fig = plt.figure(figsize=(25,15))
         ordre_tours = ['1st Round', '2nd Round', '3rd Round', '4th Round','Quarterfinals', 'Semifinals', 'The Final', 'Round Robin']
         ordre_tours_mineurs = ['1st Round', '2nd Round', '3rd Round', 'Quarterfinals', 'Semifinals', 'The Final', 'Round Robin']
-
         plt.subplot(1,2,1)
         sns.boxplot(data=atp_tournoi_majeur, x='Round', y='WRank', hue='Surface', order=ordre_tours)
         plt.title("Tournois Majeurs : Dispersion des Classements des Gagnants par Surface et Tour")
         plt.xlabel("Tour du Tournoi")
         plt.ylabel("Classement du Gagnant")
         plt.legend(title="Surface")
-
         plt.subplot(1,2,2)
         sns.boxplot(data=atp_tournoi_mineur, x='Round', y='WRank', hue='Surface', order=ordre_tours_mineurs)
         plt.title("Tournois mineurs : Dispersion des Classements des Gagnants par Surface et Tour")
